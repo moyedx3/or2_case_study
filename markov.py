@@ -4,16 +4,44 @@ from numpy.linalg import matrix_power
 import matplotlib.pyplot as plt
 import networkx as nx
 
-# Define the transition matrix P for a Markov Chain with 4 states
-P = np.array([
-    [0.06, 0.41, 0.53, 0.00],
-    [0.07, 0.42, 0.47, 0.04],
-    [0.08, 0.40, 0.47, 0.05],
-    [0.40, 0.40, 0.10, 0.10]
-])
+import pandas as pd
+import numpy as np
+
+# Read the CSV file.
+df = pd.read_csv("./S&P 500 2023 Data.csv")
+
+# Categorize states based on the "Change %" column.
+def categorize_change(change_percent_str):
+    change_percent = float(change_percent_str.replace('%', ''))
+    if change_percent > 1:
+        return 1  # State 0: Going Up High
+    elif 0 <= change_percent <= 1:
+        return 2  # State 1: Going Up Low
+    elif -1 <= change_percent < 0:
+        return 3  # State 2: Going Down Low
+    else:
+        return 4  # State 3: Going Down High
+
+# Convert "Change %" of each row to state.
+df['state'] = df['Change %'].apply(categorize_change)
+
+# Initialize the transition probability matrix.
+transition_matrix = np.zeros((4, 4))
+
+# Count state transitions.
+for i in range(1, len(df)):
+    from_state = df['state'][i - 1] - 1
+    to_state = df['state'][i] - 1
+    transition_matrix[from_state][to_state] += 1
+
+# Convert to transition probability matrix.
+transition_matrix = transition_matrix / transition_matrix.sum(axis=1, keepdims=True)
+
+print("Transition Matrix:")
+print(transition_matrix)
 
 # Normalize P to ensure each row sums to 1
-P = P / P.sum(axis=1, keepdims=True)
+P = transition_matrix / transition_matrix.sum(axis=1, keepdims=True)
 
 # Check if the Markov chain is ergodic
 def is_ergodic(P):
