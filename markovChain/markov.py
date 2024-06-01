@@ -42,6 +42,8 @@ print(transition_matrix)
 
 # Normalize P to ensure each row sums to 1
 P = transition_matrix / transition_matrix.sum(axis=1, keepdims=True)
+print('normalize p')
+print(P)
 
 # Check if the Markov chain is ergodic
 def is_ergodic(P):
