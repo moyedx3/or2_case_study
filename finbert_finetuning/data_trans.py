@@ -7,8 +7,8 @@ import json
 import os
 import sys
 import urllib.request
-client_id = "pyq4fq6nd8"
-client_secret = "xmySeb2gSKckt6v4ERpUIKw51KqJDQ3xiMBQv1Em"
+client_id = "your-id"
+client_secret = "your-secret"
 def translate_title(data, translator):
 
     try:
